@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .grid-cell {
+    @apply w-16 h-16 border border-gray-300 rounded-lg transition-all duration-200 cursor-pointer hover:shadow-md flex items-center justify-center text-xs font-medium;
+  }
+  
+  .grid-cell-empty {
+    @apply bg-grid-empty hover:bg-gray-100;
+  }
+  
+  .grid-cell-electronics {
+    @apply bg-grid-electronics text-white shadow-sm;
+  }
+  
+  .grid-cell-office {
+    @apply bg-grid-office text-white shadow-sm;
+  }
+  
+  .grid-cell-books {
+    @apply bg-grid-books text-white shadow-sm;
+  }
+  
+  .grid-cell-furniture {
+    @apply bg-grid-furniture text-white shadow-sm;
+  }
+  
+  .grid-cell-tools {
+    @apply bg-grid-tools text-white shadow-sm;
+  }
+  
+  .grid-cell-miscellaneous {
+    @apply bg-grid-miscellaneous text-white shadow-sm;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+  }
+}
