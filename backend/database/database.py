@@ -42,10 +42,10 @@ class ItemDatabase:
                 ("책", "파이썬 프로그래밍", "F1-F2", "도서")
             ]
             
-            cursor.executemany("""
-                INSERT INTO items (name, description, grid_position, category)
-                VALUES (?, ?, ?, ?)
-            """, sample_items)
+            cursor.executemany(
+                "INSERT INTO items (name, description, grid_position, category) VALUES (?, ?, ?, ?)",
+                sample_items
+            )
         
         conn.commit()
         conn.close()
@@ -70,17 +70,19 @@ class ItemDatabase:
         rows = cursor.fetchall()
         conn.close()
         
-        items = []
+        items: List[Item] = []
         for row in rows:
-            items.append(Item(
-                id=row[0],
-                name=row[1],
-                description=row[2],
-                grid_position=row[3],
-                category=row[4],
-                created_at=row[5],
-                updated_at=row[6]
-            ))
+            items.append(
+                Item(
+                    id=row[0],
+                    name=row[1],
+                    description=row[2],
+                    grid_position=row[3],
+                    category=row[4],
+                    created_at=row[5],
+                    updated_at=row[6]
+                )
+            )
         
         return items
     
@@ -170,17 +172,19 @@ class ItemDatabase:
         rows = cursor.fetchall()
         conn.close()
         
-        items = []
+        items: List[Item] = []
         for row in rows:
-            items.append(Item(
-                id=row[0],
-                name=row[1],
-                description=row[2],
-                grid_position=row[3],
-                category=row[4],
-                created_at=row[5],
-                updated_at=row[6]
-            ))
+            items.append(
+                Item(
+                    id=row[0],
+                    name=row[1],
+                    description=row[2],
+                    grid_position=row[3],
+                    category=row[4],
+                    created_at=row[5],
+                    updated_at=row[6]
+                )
+            )
         
         return items
     
