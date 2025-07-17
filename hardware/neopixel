@@ -1,0 +1,82 @@
+#include <Adafruit_NeoPixel.h>
+
+//--- 하드웨어 설정 --------------------------------
+// 5개 열(A~E)을 물리적으로 꽂은 Arduino 핀 번호
+// A열 → 2, B열 → 3, C열 → 4, D열 → 5, E열 → 6
+const uint8_t DATA_PINS[] = {2, 3, 4, 5, 6};
+
+// 그리드 크기
+#define COL_COUNT 5    // 열 개수 (A~E)
+#define ROW_COUNT 8    // 행 개수 (1~8)
+#define CELL_LEN   3   // 셀당 LED 개수
+#define BRIGHTNESS 50  // 0~255
+
+// 각 열마다 NeoPixel 스트립 객체 생성
+Adafruit_NeoPixel strips[COL_COUNT] = {
+  Adafruit_NeoPixel(ROW_COUNT * CELL_LEN, DATA_PINS[0], NEO_GRB + NEO_KHZ800),
+  Adafruit_NeoPixel(ROW_COUNT * CELL_LEN, DATA_PINS[1], NEO_GRB + NEO_KHZ800),
+  Adafruit_NeoPixel(ROW_COUNT * CELL_LEN, DATA_PINS[2], NEO_GRB + NEO_KHZ800),
+  Adafruit_NeoPixel(ROW_COUNT * CELL_LEN, DATA_PINS[3], NEO_GRB + NEO_KHZ800),
+  Adafruit_NeoPixel(ROW_COUNT * CELL_LEN, DATA_PINS[4], NEO_GRB + NEO_KHZ800)
+};
+//--------------------------------------------------
+
+
+void setup() {
+  Serial.begin(115200);
+  // NeoPixel 초기화
+  for (int c = 0; c < COL_COUNT; c++) {
+    strips[c].begin();
+    strips[c].setBrightness(BRIGHTNESS);
+    strips[c].show();  // 모두 OFF
+  }
+  Serial.println(F("Ready. 좌표(A1~E8) 입력 또는 OFF"));
+}
+
+// 한 번 켜고 끌 때까지 유지할 색상 (원하면 변경)
+uint32_t onColor = strips[0].Color(255, 0, 0);  // 빨강
+
+void loop() {
+  if (!Serial.available()) return;
+
+  String line = Serial.readStringUntil('\n');
+  line.trim();
+  if (line.equalsIgnoreCase("OFF")) {
+    // 전체 끄기
+    for (int c = 0; c < COL_COUNT; c++) {
+      for (int i = 0; i < ROW_COUNT * CELL_LEN; i++) {
+        strips[c].setPixelColor(i, 0);
+      }
+      strips[c].show();
+    }
+    Serial.println(F("All OFF"));
+    return;
+  }
+
+  // 좌표 파싱 (예: "A1,B3,C5")
+  int start = 0;
+  while (start < line.length()) {
+    int comma = line.indexOf(',', start);
+    String coord = (comma < 0 ? line.substring(start) : line.substring(start, comma));
+    coord.trim();
+    start = (comma < 0 ? line.length() : comma + 1);
+
+    // "A1" → col=0, row=0
+    if (coord.length() >= 2) {
+      char R = toupper(coord.charAt(0));
+      int col = R - 'A';
+      int row = coord.substring(1).toInt() - 1;
+      if (col >= 0 && col < COL_COUNT && row >= 0 && row < ROW_COUNT) {
+        // 해당 셀의 3 LEDs 켜기
+        int base = row * CELL_LEN;
+        for (int k = 0; k < CELL_LEN; k++) {
+          strips[col].setPixelColor(base + k, onColor);
+        }
+        strips[col].show();
+        Serial.print("Lit "); Serial.println(coord);
+      } else {
+        Serial.print("Invalid coord: "); Serial.println(coord);
+      }
+    }
+  }
+}
